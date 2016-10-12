@@ -47,7 +47,7 @@ impl<T, M : Matcher<T>> fmt::Display for IsNot<T, M> {
 impl<T, M : Matcher<T>> Matcher<T> for IsNot<T, M> {
     fn matches(&self, actual: T) -> MatchResult {
         match self.matcher.matches(actual) {
-            Ok(_) => Err("matched".to_string()),
+            Ok(_) => Err(MatchFailure::Fragment("matched".to_string())),
             Err(_) => Ok(())
         }
     }

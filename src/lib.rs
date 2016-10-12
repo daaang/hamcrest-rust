@@ -28,7 +28,12 @@ macro_rules! assert_that {
                 // The panic macro produces the correct file and line number
                 // when used in a macro like this, i.e. it's the line where
                 // the macro was originally written.
-                panic!("\nExpected: {}\n    but: {}", m, mismatch);
+                match mismatch {
+                    MatchFailure::Complete(message) => panic!(message),
+                    MatchFailure::Fragment(fragment) => {
+                        panic!("\nExpected: {}\n    but: {}", m, fragment);
+                    }
+                }
             }
         }
     }
@@ -40,6 +45,7 @@ pub mod matchers;
 pub mod prelude {
     #[allow(deprecated)] pub use core::assert_that;
     pub use core::Matcher as HamcrestMatcher;
+    pub use core::MatchFailure;
     pub use matchers::close_to::close_to;
     pub use matchers::equal_to::equal_to;
     pub use matchers::existing_path::existing_dir;

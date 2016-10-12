@@ -10,7 +10,13 @@
 
 use std::fmt;
 
-pub type MatchResult = Result<(), String>;
+// TODO: Temporary until all matchers produce their own complete messages
+pub enum MatchFailure {
+    Complete(String),
+    Fragment(String),
+}
+
+pub type MatchResult = Result<(), MatchFailure>;
 
 pub fn success() -> MatchResult {
     Ok(())
@@ -21,7 +27,7 @@ pub fn expect(predicate: bool, msg: String) -> MatchResult {
         success()
     }
     else {
-        Err(msg)
+        Err(MatchFailure::Fragment(msg))
     }
 }
 
@@ -30,7 +36,12 @@ pub fn assert_that<T, U: Matcher<T>>(actual: T, matcher: U) {
     match matcher.matches(actual) {
         Ok(_) => return,
         Err(mismatch) => {
-            panic!("\nExpected: {}\n    but: {}", matcher, mismatch);
+            match mismatch {
+                MatchFailure::Complete(message) => panic!(message),
+                MatchFailure::Fragment(fragment) => {
+                    panic!("\nExpected: {}\n    but: {}", matcher, fragment);
+                }
+            }
         }
     }
 }

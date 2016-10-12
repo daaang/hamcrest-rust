@@ -29,7 +29,7 @@ impl<T : PartialEq + fmt::Debug> Matcher<T> for EqualTo<T> {
             success()
         }
         else {
-            Err(format!("was {:?}", actual))
+            Err(MatchFailure::Fragment(format!("was {:?}", actual)))
         }
     }
 }

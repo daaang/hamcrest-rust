@@ -50,7 +50,10 @@ impl<T: Float + Zero + Debug> Matcher<T> for CloseTo<T> {
         if close {
             success()
         } else {
-            Err(format!("was {:?}", actual))
+            let err = MatchFailure::Complete(
+                format!("Expected {:?} to be within {:?} of {:?}", actual, self.epsilon, self.expected)
+            );
+            Err(err)
         }
     }
 }

@@ -22,6 +22,14 @@ mod close_to {
     }
 
     #[test]
+    #[should_panic(expected = "Expected 1 to be within 0.1 of 2")]
+    fn produces_a_nice_failure_message() {
+        assert_that!(1.0, is(close_to(2.0, 0.1)));
+    }
+
+    // TODO: Handle the is(not(...)) case as well
+
+    #[test]
     fn it_can_handle_infinity() {
         assert_that!(f64::INFINITY, is(close_to(f64::INFINITY, 0.00001)));
     }

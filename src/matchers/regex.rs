@@ -27,7 +27,7 @@ impl<'a> Matcher<&'a str> for MatchesRegex {
             success()
         }
         else {
-            Err(format!("was {:?}", actual))
+            Err(MatchFailure::Fragment(format!("was {:?}", actual)))
         }
     }
 }

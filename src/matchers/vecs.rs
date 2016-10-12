@@ -31,7 +31,7 @@ impl<'a, T> Matcher<&'a Vec<T>> for OfLen {
         if self.len == actual.len() {
             success()
         } else {
-            Err(format!("was len {}", actual.len()))
+            Err(MatchFailure::Fragment(format!("was len {}", actual.len())))
         }
     }
 }
@@ -70,12 +70,12 @@ impl<'a, T: fmt::Debug + PartialEq + Clone> Matcher<&'a Vec<T>> for Contains<T> 
         for item in self.items.iter() {
             match rem.iter().position(|a| *item == *a) {
                 Some(idx) => { rem.remove(idx); },
-                None => return Err(format!("was {}", Pretty(&actual)))
+                None => return Err(MatchFailure::Fragment(format!("was {}", Pretty(&actual))))
             }
         }
 
         if self.exactly && !rem.is_empty() {
-            return Err(format!("also had {}", Pretty(&rem)));
+            return Err(MatchFailure::Fragment(format!("also had {}", Pretty(&rem))));
         }
 
         success()
